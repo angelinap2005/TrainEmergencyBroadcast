@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class GenerateMessage {
+public class EmergencyMessage {
     private String message;
-    public GenerateMessage(String message) {
+    public EmergencyMessage(String message) {
         this.message = message;
     }
 }
