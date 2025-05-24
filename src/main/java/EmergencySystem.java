@@ -2,6 +2,7 @@ import dto.RailLine;
 import dto.RailStation;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import userControl.UserControl;
 import util.AddRailLines;
 import util.FileParser;
 import util.graph.GraphGenerator;
@@ -47,7 +48,8 @@ public class EmergencySystem {
         //generate graph
         GraphGenerator graphGenerator = new GraphGenerator(graphObjectGenerator);
         graphGenerator.generateGraph(graphObjectGenerator.getStations());
-        graphGenerator.printEntireMap();
+        UserControl userControl = new UserControl(graphGenerator);
+        userControl.start();
     }
 
     private static Document parseDoc(File fileKML) throws ParserConfigurationException, IOException, SAXException {
