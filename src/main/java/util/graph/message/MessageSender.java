@@ -28,7 +28,7 @@ public class MessageSender {
 
 
     public boolean control(String message) {
-        boolean result = false;
+        boolean result;
         this.message = message;
         sendMessage();
         result = broadcastMessageVisualisation();
@@ -43,7 +43,6 @@ public class MessageSender {
             System.out.println("Broadcasting message: " + message);
             start = new Timestamp(System.currentTimeMillis());
             graph.nodes().forEach(node -> {
-                // Here you would implement the logic to send the message to each node
                 System.out.println("Sending to station: " + node.getId());
             });
             end = new Timestamp(System.currentTimeMillis());
