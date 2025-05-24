@@ -1,0 +1,75 @@
+package util;
+
+import dto.RailLine;
+import dto.RailStation;
+import lombok.Getter;
+import org.w3c.dom.*;
+
+import java.util.ArrayList;
+
+/*For file parsing code was taken from:
+ * https://www.tutorialspoint.com/java_xml/java_dom_parse_document.htm
+ * https://www.geeksforgeeks.org/java-program-to-extract-content-from-a-xml-document/
+ */
+@Getter
+public class FileParser {
+    private ArrayList<RailLine> railLines;
+    private ArrayList<RailStation> railStations;
+    private ArrayList<String> railLinesNames;
+
+    public FileParser() {
+        this.railLines = new ArrayList<>();
+        this.railStations = new ArrayList<>();
+        this.railLinesNames = new ArrayList<>();
+    }
+    public void traverse(Document doc) {
+        Element kmlElement = (Element) doc.getElementsByTagName("kml").item(0);
+        Element documentElement = (Element) kmlElement.getElementsByTagName("Document").item(0);
+        String docName = documentElement.getElementsByTagName("name").item(0).getTextContent();
+        //check document name
+        if ("London Train Lines".equals(docName)) {
+            railLineParser(doc);
+        } else if ("London stations".equals(docName)) {
+            railStationParser(doc);
+        } else {
+            System.out.println("Unknown document name: " + docName);
+        }
+    }
+
+    private void railLineParser(Document doc) {
+        NodeList nodeList = doc.getElementsByTagName("Placemark");
+        for (int i = 0; i < nodeList.getLength(); ++i) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                RailLine railLine = new RailLine();
+                Element tElement = (Element) node;
+                railLine.setName(tElement.getElementsByTagName("name").item(0).getTextContent());
+                railLine.setStyleUrl(tElement.getElementsByTagName("styleUrl").item(0).getTextContent());
+                String coordinates = tElement.getElementsByTagName("coordinates").item(0).getTextContent().trim();
+                String[] coordinatesArray = coordinates.split(",");
+                railLine.setCoordinates(coordinatesArray);
+                railLines.add(railLine);
+                if (!railLinesNames.contains(railLine.getName().split(" - ")[0].trim())) {
+                    railLinesNames.add(railLine.getName().split(" - ")[0].trim());
+                }
+            }
+        }
+    }
+
+    private void railStationParser(Document doc) {
+        NodeList nodeList = doc.getElementsByTagName("Placemark");
+        for (int i = 0; i < nodeList.getLength(); ++i) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                RailStation railStation = new RailStation();
+                Element tElement = (Element) node;
+                railStation.setName(tElement.getElementsByTagName("name").item(0).getTextContent());
+                railStation.setStyleUrl(tElement.getElementsByTagName("styleUrl").item(0).getTextContent());
+                String coordinates = tElement.getElementsByTagName("coordinates").item(0).getTextContent().trim();
+                String[] coordinatesArray = coordinates.split(",");
+                railStation.setCoordinates(coordinatesArray);
+                railStations.add(railStation);
+            }
+        }
+    }
+}
