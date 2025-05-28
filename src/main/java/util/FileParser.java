@@ -15,12 +15,10 @@ import java.util.ArrayList;
 public class FileParser {
     private ArrayList<RailLine> railLines;
     private ArrayList<RailStation> railStations;
-    private ArrayList<String> railLinesNames;
 
     public FileParser() {
         this.railLines = new ArrayList<>();
         this.railStations = new ArrayList<>();
-        this.railLinesNames = new ArrayList<>();
     }
     public void traverse(Document doc) {
         Element kmlElement = (Element) doc.getElementsByTagName("kml").item(0);
@@ -44,14 +42,18 @@ public class FileParser {
                 RailLine railLine = new RailLine();
                 Element tElement = (Element) node;
                 railLine.setName(tElement.getElementsByTagName("name").item(0).getTextContent());
-                railLine.setStyleUrl(tElement.getElementsByTagName("styleUrl").item(0).getTextContent());
                 String coordinates = tElement.getElementsByTagName("coordinates").item(0).getTextContent().trim();
-                String[] coordinatesArray = coordinates.split(",");
+                String[] coordinatesStringArray = coordinates.split(",");
+                Double[] coordinatesArray = new Double[2];
+                for(int j = 0; j < coordinatesArray.length; j++) {
+                    if(coordinatesStringArray[j].length() > 1){
+                        if(coordinatesArray[j] == null){
+                            coordinatesArray[j] = Double.parseDouble(coordinatesStringArray[j]);
+                        }
+                    }
+                }
                 railLine.setCoordinates(coordinatesArray);
                 railLines.add(railLine);
-                if (!railLinesNames.contains(railLine.getName().split(" - ")[0].trim())) {
-                    railLinesNames.add(railLine.getName().split(" - ")[0].trim());
-                }
             }
         }
     }
@@ -64,9 +66,16 @@ public class FileParser {
                 RailStation railStation = new RailStation();
                 Element tElement = (Element) node;
                 railStation.setName(tElement.getElementsByTagName("name").item(0).getTextContent());
-                railStation.setStyleUrl(tElement.getElementsByTagName("styleUrl").item(0).getTextContent());
                 String coordinates = tElement.getElementsByTagName("coordinates").item(0).getTextContent().trim();
-                String[] coordinatesArray = coordinates.split(",");
+                String[] coordinatesStringArray = coordinates.split(",");
+                Double[] coordinatesArray = new Double[2];
+                for(int j = 0; j < coordinatesArray.length; j++) {
+                    if(coordinatesStringArray[j].length() > 1){
+                        if(coordinatesArray[j] == null){
+                            coordinatesArray[j] = Double.parseDouble(coordinatesStringArray[j]);
+                        }
+                    }
+                }
                 railStation.setCoordinates(coordinatesArray);
                 railStations.add(railStation);
             }

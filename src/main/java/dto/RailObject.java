@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class RailObject {
     private String name;
     private String styleUrl;
-    private String[] coordinates;
+    private Double[] coordinates;
     private ArrayList<Integer> lineString;
     private String placemark;
 
