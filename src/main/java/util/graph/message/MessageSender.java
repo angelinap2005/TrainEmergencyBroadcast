@@ -61,12 +61,12 @@ public class MessageSender {
 
         //reset graph styles
         graph.nodes().forEach(node -> {
-            node.setAttribute("ui.style", "fill-color: #666666; size: 10px;");
+            node.setAttribute("ui.style", "fill-color: #666666; size: 10px; text-size: 14; text-color: black; text-style: bold;");
             node.setAttribute("ui.label", node.getId());
         });
 
         graph.edges().forEach(edge -> {
-            edge.setAttribute("ui.style", "fill-color: #333333; size: 2px;");
+            edge.setAttribute("ui.style", "fill-color: blue; size: 2px;");
         });
 
         //display the graph

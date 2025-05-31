@@ -9,7 +9,6 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.view.Viewer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,16 +34,10 @@ public class GraphGenerator {
     }
 
     private void setSystemProperties() {
-        // Same system properties as RouteGenerator
         System.setProperty("org.graphstream.ui", "swing");
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
         this.graph = new SingleGraph("Train Graph");
         this.processedEdges = new HashSet<>();
-
-        // Match the exact same styling attributes as RouteGenerator
-        graph.setAttribute("ui.quality");
-        graph.setAttribute("ui.antialias");
-        graph.setAttribute("ui.stylesheet", "node { size: 10px; fill-color: #666666; text-size: 14; }" + "edge { size: 2px; fill-color: #333333; }");
     }
 
 
@@ -138,23 +131,6 @@ public class GraphGenerator {
             }
         } catch (Exception e) {
             System.err.println("Warning: Could not create edge between " + sourceStation + " and " + destStation);
-        }
-    }
-
-    public void printEntireMap() {
-        try {
-            //set default node and edge styles
-            graph.edges().forEach(edge -> {
-                edge.setAttribute("ui.style", "fill-color: #333333;");
-            });
-            graph.nodes().forEach(node -> {
-                node.setAttribute("ui.style", "fill-color: #666666;");
-            });
-
-            Viewer viewer = graph.display();
-            viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
-        } catch (Exception e) {
-            System.err.println("Error displaying graph: " + e.getMessage());
         }
     }
 }
