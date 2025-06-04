@@ -60,7 +60,7 @@ public class EmergencySystem {
         }
     }
 
-    private static void setRailLines(ArrayList<RailLine> railLines, ArrayList<RailStation> railStations) {
+    public static void setRailLines(ArrayList<RailLine> railLines, ArrayList<RailStation> railStations) {
         for (RailStation station : railStations) {
             ArrayList<RailLine> lines = new ArrayList<>();
             String stationName = station.getName();
