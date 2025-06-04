@@ -1,5 +1,6 @@
 package util.graph;
 
+import dto.RailStation;
 import dto.Route;
 import dto.Station;
 import lombok.Getter;
@@ -46,12 +47,34 @@ public class GraphGenerator {
         if (stations == null) {
             throw new IllegalArgumentException("Stations list cannot be null");
         }
+        Graph graph = new SingleGraph("RailNetwork");
 
+        //set graph attributes
+        graph.setAttribute("ui.quality");
+        graph.setAttribute("ui.antialias");
+
+        for (Station station : stations) {
+            //check if station is valid before adding
+            if (isValidStation(station)) {
+                RailStation railStation = station.getRailStation();
+                Node node = graph.addNode(railStation.getName());
+
+                //set node attributes
+                Double[] coords = railStation.getCoordinates();
+                if (coords != null && coords.length >= 2) {
+                    //set node position based on coordinates
+                    node.setAttribute("x", coords[0]);
+                    node.setAttribute("y", -coords[1]);
+                    node.setAttribute("layout.frozen");
+                }
+
+                node.setAttribute("ui.label", railStation.getName());
+            }
+        }
         try {
             //clear the graph
             graph.clear();
             processedEdges.clear();
-
             //add graph nodes
             addNodes(stations);
             //add graph edges

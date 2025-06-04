@@ -3,6 +3,7 @@ import dto.RailStation;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import userControl.UserControl;
+import util.DocumentParser;
 import util.FileParser;
 import util.graph.GraphGenerator;
 import util.graph.GraphObjectGenerator;
@@ -59,15 +60,6 @@ public class EmergencySystem {
         }
     }
 
-    private static Document parseDoc(File fileKML) throws ParserConfigurationException, IOException, SAXException {
-        //parse kml
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(fileKML);
-        doc.getDocumentElement().normalize();
-        return doc;
-    }
-
     private static void setRailLines(ArrayList<RailLine> railLines, ArrayList<RailStation> railStations) {
         for (RailStation station : railStations) {
             ArrayList<RailLine> lines = new ArrayList<>();
@@ -81,5 +73,9 @@ public class EmergencySystem {
             }
             station.setRailLines(lines);
         }
+    }
+
+    private static Document parseDoc(File fileKML) throws ParserConfigurationException, IOException, SAXException {
+        return DocumentParser.parseDocument(fileKML);
     }
 }
