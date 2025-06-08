@@ -24,17 +24,25 @@ public class FileParserTest {
     }
 
     @Test
-    public void testParseLineFile() throws IOException, ParserConfigurationException, SAXException {
+    public void parseLineFileTest() throws IOException, ParserConfigurationException, SAXException {
         Document doc = parseDoc(new File("src/test/resources/testLinesFile.kml"));
         fileParserMock.traverse(doc);
         assertEquals(1416, fileParserMock.getRailLines().size());
     }
 
     @Test
-    public void testParseStationFile() throws IOException, ParserConfigurationException, SAXException {
+    public void parseStationFileTest() throws IOException, ParserConfigurationException, SAXException {
         Document doc = parseDoc(new File("src/test/resources/testStationFile.kml"));
         fileParserMock.traverse(doc);
         assertEquals(654, fileParserMock.getRailStations().size());
+    }
+
+    @Test
+    public void parseInvalidFileTest() throws IOException, ParserConfigurationException, SAXException {
+        Document doc = parseDoc(new File("src/test/resources/invalidFile.kml"));
+        fileParserMock.traverse(doc);
+        assertEquals(0, fileParserMock.getRailLines().size());
+        assertEquals(0, fileParserMock.getRailStations().size());
     }
 
     private Document parseDoc(File fileKML) throws ParserConfigurationException, IOException, SAXException {

@@ -27,7 +27,7 @@ public class EmergencySystemTest {
     }
 
     @Test
-    public void testParseDocWithValidFile(){
+    public void parseDocWithValidFileTest(){
         Document doc;
         try {
             doc = DocumentParser.parseDocument(validLinesFile);
@@ -43,7 +43,7 @@ public class EmergencySystemTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testParseDocWithNonExistentFile(){
+    public void parseDocWithNoExistentFileTest(){
         try {
             DocumentParser.parseDocument(new File("nonexistent.kml"));
         } catch (ParserConfigurationException e) {
@@ -56,39 +56,48 @@ public class EmergencySystemTest {
     }
 
     @Test
-    public void testSetRailLines() {
+    public void setRailLinesTest() {
+        //create empty lists for rail lines and stations
         ArrayList<RailLine> railLines = new ArrayList<>();
         ArrayList<RailStation> railStations = new ArrayList<>();
 
+        //create a rail line
         RailLine line = new RailLine();
         line.setName("Weaver - Stoke Newington to Stamford Hill");
         railLines.add(line);
 
+        //create a rail station and assign the rail line to it
         RailStation station = new RailStation();
         station.setName("Stoke Newington");
         station.setRailLines(new ArrayList<>());
         railStations.add(station);
 
+        //call the method to set rail lines
         EmergencySystem.setRailLines(railLines, railStations);
 
+        //verify that the rail line was added to the station
         assertEquals(1, station.getRailLines().size());
         assertEquals("Weaver - Stoke Newington to Stamford Hill", station.getRailLines().get(0).getName());
     }
 
     @Test
-    public void testSetRailLinesWithEmptyData() {
+    public void setRailLinesWithNoLinesTest() {
         ArrayList<RailLine> railLines = new ArrayList<>();
         ArrayList<RailStation> railStations = new ArrayList<>();
 
+        //call the method to set rail lines with empty lists
         EmergencySystem.setRailLines(railLines, railStations);
     }
 
     @Test
-    public void testMainMethodArgumentValidation() {
+    public void mainMethodArgumentValidationTest() {
+        //test the main method with no arguments
         String[] emptyArgs = {};
         try {
             EmergencySystem.main(emptyArgs);
+            //expect an exception to be thrown
         } catch (Exception e) {
+            //expect an ArrayIndexOutOfBoundsException
             assertTrue(e instanceof ArrayIndexOutOfBoundsException);
         }
     }
