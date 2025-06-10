@@ -1,23 +1,16 @@
 package util.graph;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.Timer;
 
 import dto.RailLine;
 import dto.RailStation;
-import org.graphstream.ui.geom.Point3;
-import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 import lombok.Getter;
 import lombok.Setter;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.view.View;
-import org.graphstream.ui.view.Viewer;
 import dto.Route;
 import dto.Station;
-import org.graphstream.ui.view.camera.Camera;
 
 @Getter
 @Setter
@@ -109,7 +102,7 @@ public class GraphGenerator {
                     if (isValidRoute(route)) {
                         //check if destination station is null
                         String destStation = route.getDestination().getName();
-                        addEdgeSafely(sourceStation, destStation);
+                        addEdge(sourceStation, destStation);
                     }
                 } catch (Exception e) {
                     System.err.println("Error processing route from " + sourceStation + ": " + e.getMessage());
@@ -129,7 +122,7 @@ public class GraphGenerator {
     }
 
 
-    private void addEdgeSafely(String sourceStation, String destStation) {
+    private void addEdge(String sourceStation, String destStation) {
         String edgeId = sourceStation + "--" + destStation;
         String reverseEdgeId = destStation + "--" + sourceStation;
 
@@ -189,127 +182,5 @@ public class GraphGenerator {
             }
         }
         return "#0000FF";
-    }
-
-    public void printEntireMap() {
-        try {
-            //generate the graph
-            configureGraphStyles();
-            Viewer viewer = graph.display();
-            viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
-
-            //set the default view
-            SpringBox layout = new SpringBox(false);
-            layout.setForce(0.7);
-            layout.setQuality(1);
-            layout.setStabilizationLimit(0.9);
-            viewer.enableAutoLayout(layout);
-
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    viewer.disableAutoLayout();
-                }
-            }, 3000);
-
-            System.out.println("\nGraph Controls:");
-            System.out.println("- Use mouse wheel to zoom in/out");
-            System.out.println("- Use arrow keys to pan the view");
-            System.out.println("- Press shift 'r' to reset view");
-
-            new Thread(() -> {
-                try {
-                    Thread.sleep(1000);
-                    View view = viewer.getDefaultView();
-
-                    if (view != null && view instanceof Component) {
-                        Component component = (Component) view;
-
-                        //enable mouse wheel zooming
-                        component.addMouseWheelListener(e -> {
-                            Camera camera = view.getCamera();
-                            double currentZoom = camera.getViewPercent();
-                            double zoomFactor = 0.05;
-                            Point3 center = camera.getViewCenter();
-
-                            //check if the mouse wheel rotation is negative (zooming in) or positive (zooming out)
-                            if (e.getWheelRotation() < 0) {
-                                double newZoom = currentZoom * (1.0 - zoomFactor);
-                                newZoom = Math.max(newZoom, 0.05);
-
-                                camera.setAutoFitView(false);
-                                camera.setViewPercent(newZoom);
-
-                                //set the viewport size based on the new zoom level
-                                double viewportSize = Math.max(20, 10/newZoom);
-                                camera.setGraphViewport(-viewportSize, -viewportSize, viewportSize, viewportSize);
-
-                                double finalNewZoom = newZoom;
-                                graph.nodes().forEach(node -> {
-                                    double scale = Math.min(1.5, 1.0/ finalNewZoom * 0.3);
-                                    node.setAttribute("ui.size", 10 * scale);
-                                    node.setAttribute("ui.style", "text-size: 12px; z-index: 1000;");
-                                });
-                            } else {
-                                //zoom out
-                                double newZoom = currentZoom * (1.0 + zoomFactor);
-                                newZoom = Math.min(newZoom, 3.0);
-                                camera.setViewPercent(newZoom);
-
-                                //set the viewport size based on the new zoom level
-                                graph.nodes().forEach(node -> {
-                                    node.setAttribute("ui.size", 10);
-                                    node.setAttribute("ui.style", "text-size: 12px; z-index: 100;");
-                                });
-                            }
-
-                            //recenter the camera after zooming
-                            camera.setViewCenter(center.x, center.y, 0);
-                        });
-
-                        //request focus on the component to enable keyboard controls
-                        component.setFocusable(true);
-                        component.requestFocus();
-                    }
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
-            }).start();
-
-        } catch (Exception e) {
-            //handle any exceptions that occur during graph generation or display
-            System.err.println("Error displaying graph: " + e.getMessage());
-        }
-    }
-
-    private void configureGraphStyles() {
-        //set graph attributes
-        graph.setAttribute("ui.quality");
-        graph.setAttribute("ui.antialias");
-
-        //set the stylesheet for the graph
-        String stylesheet =
-                "graph { padding: 50px; } " +
-                        "node { " +
-                        "size: 10px; " +
-                        "fill-color: #999999; " +
-                        "text-style: bold; " +
-                        "text-color: black; " +
-                        "text-size: 15px; " +
-                        "text-offset: 5px, 5px; " +
-                        "text-padding: 3px; " +
-                        "} " +
-                        "edge { " +
-                        "arrow-size: 5px, 4px; " +
-                        "size-mode: dyn-size; " +
-                        "size: 2px; " +
-                        "}";
-
-        graph.setAttribute("ui.stylesheet", stylesheet);
-
-        //set default edge attributes
-        graph.edges().forEach(edge -> {
-            edge.setAttribute("weight", 2.0);
-        });
     }
 }
