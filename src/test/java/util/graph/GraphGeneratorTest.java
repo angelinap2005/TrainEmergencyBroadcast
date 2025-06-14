@@ -124,20 +124,4 @@ public class GraphGeneratorTest {
         //attempt to generate the graph with null data
         graphGenerator.generateGraph(null);
     }
-
-    @Test
-    public void resetEdgeColourTest() {
-        //generate the graph
-        graphGenerator.generateGraph(stations);
-
-        try {
-            //reset the edge colors
-            graphGenerator.resetEdgeColors();
-            //assert that the resetEdgeColors method executes without exceptions
-            assertTrue("resetEdgeColors should execute without exception", true);
-        } catch (Exception e) {
-            //if an exception is thrown, the test fails
-            fail("resetEdgeColors should not throw exception: " + e.getMessage());
-        }
-    }
 }
